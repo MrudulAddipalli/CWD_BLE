@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-
-import 'package:simple_permissions/simple_permissions.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 import "./PermissionController.dart";
 import "../helpers/alerts.dart";
@@ -15,14 +14,14 @@ class CameraController {
     //
     //
     String status = await PermissionController.getInstance
-        .checkAndRequestPermission(requestedpermission: Permission.Camera);
+        .checkAndRequestPermission(requestedpermission: Permission.camera);
     if (status.contains("Permission")) {
       await Alert.getInstance.error(context: context, textmessage: status);
       return false;
     } else {
       String status = await PermissionController.getInstance
           .checkAndRequestPermission(
-              requestedpermission: Permission.WriteExternalStorage);
+              requestedpermission: Permission.storage);
       if (status.contains("Permission")) {
         await Alert.getInstance.error(context: context, textmessage: status);
         return false;

@@ -1,4 +1,4 @@
-import 'package:simple_permissions/simple_permissions.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class PermissionController {
   //
@@ -11,10 +11,15 @@ class PermissionController {
   Future<String> checkAndRequestPermission(
       {Permission requestedpermission}) async {
     // print("checking permission");
-    bool checkResult = false;
+    PermissionStatus checkResult = PermissionStatus.denied;
     try {
-      checkResult =
-          await SimplePermissions.checkPermission(requestedpermission);
+      if (requestedpermission == Permission.camera) {
+        checkResult = await Permission.camera.status;
+      } else if (requestedpermission == Permission.storage) {
+        checkResult = await Permission.storage.status;
+      } else if (requestedpermission == Permission.bluetooth) {
+        checkResult = await Permission.bluetooth.status;
+      }
     } catch (e) {
       // PermissionStatus x =
       //     await SimplePermissions.getPermissionStatus(requestedpermission);
@@ -22,16 +27,22 @@ class PermissionController {
 
       return "Success";
     }
-    if (!checkResult) {
-      var status =
-          await SimplePermissions.requestPermission(requestedpermission);
+    if (!checkResult.isGranted) {
+      PermissionStatus status;
+      if (requestedpermission == Permission.camera) {
+        status = await Permission.contacts.request();
+      } else if (requestedpermission == Permission.storage) {
+        status = await Permission.contacts.request();
+      } else if (requestedpermission == Permission.bluetooth) {
+        status = await Permission.contacts.request();
+      }
       print("Permission Status - $status");
-      if (status == PermissionStatus.authorized) {
+      if (status == PermissionStatus.granted) {
         print("permission granted");
         return "Success";
       } else {
         print("permission denied");
-        if (status == PermissionStatus.deniedNeverAsk) {
+        if (status == PermissionStatus.denied) {
           return "Permission Permanently Denied";
         } else {
           return "Without Permission We Cannot Proceed Further";
@@ -43,6 +54,6 @@ class PermissionController {
   }
 
   void openSettings() {
-    SimplePermissions.openSettings();
+    openAppSettings();
   }
 }
